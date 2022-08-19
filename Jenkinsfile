@@ -19,7 +19,8 @@ pipeline {
         stage('Run gradle') {
             steps {
                 container('gradle') {
-                    sh '''gradle build'''
+                    sh '''gradle -version
+                          gradle build'''
                 }
             }
         }
