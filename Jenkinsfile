@@ -19,7 +19,7 @@ pipeline {
         stage('Run gradle') {
             steps {
                 container('gradle') {
-                    sh '''gradlew build'''
+                    sh '''gradle build'''
                 }
             }
         }
