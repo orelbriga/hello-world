@@ -13,12 +13,15 @@ pipeline {
             - cat
             tty: true
             volumeMounts:
-             - mountPath: /var/run/docker.sock
-               name: docker-sock
+              - mountPath: /var/run/docker.sock
+                name: docker-socket-volume
+            securityContext:
+              privileged: true
           volumes:
-          - name: docker-sock
-            hostPath:
-              path: /var/run/docker.sock '''
+            - name: docker-socket-volume
+              hostPath:
+                path: /var/run/docker.sock
+                type: File '''
         }
     }
     stages {
