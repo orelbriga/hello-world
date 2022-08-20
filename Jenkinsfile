@@ -36,10 +36,8 @@ pipeline {
         }
         stage ('Build & Push docker image') {
             steps {
-                withDockerRegistry(credentialsId: 'dckr_pat_OIOSjBFV1gQa9EfTVaoTlBtKsXU', url: 'https://index.docker.io/v1/') {
                     sh 'docker build -t orelbriga/hello-world-app:latest .'
                 }
             }
         }
     }
-}
