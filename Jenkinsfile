@@ -12,25 +12,34 @@ pipeline {
             command:
             - cat
             tty: true
-        '''
+          - name: docker
+            image: docker:latest
+            command:
+            - cat
+            tty: true
+            volumeMounts:
+             - mountPath: /var/run/docker.sock
+               name: docker-sock
+          volumes:
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock '''
         }
     }
     stages {
-        stage('Build Gradle') {
+        stage('Test and Build the app') {
             steps {
                 container('gradle') {
-                    sh '''gradle -version
-                          gradle build'''
+                    sh '''gradle clean build'''
                 }
             }
         }
-        stage('bootRun the application') {
+        stage ('Build & Push docker image') {
             steps {
-                container('gradle') {
-                    sh 'gradle bootrun'
+                withDockerRegistry(credentialsId: 'dckr_pat_OIOSjBFV1gQa9EfTVaoTlBtKsXU', url: 'https://index.docker.io/v1/') {
+                    sh 'docker build -t orelbriga/hello-world-app:latest .'
                 }
             }
         }
-        
     }
 }
