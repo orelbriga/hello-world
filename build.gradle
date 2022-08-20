@@ -20,3 +20,9 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+task helloworld {
+	doLast {
+		println "Hello World!!"
+	}
+}
