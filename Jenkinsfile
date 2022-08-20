@@ -24,5 +24,13 @@ pipeline {
                 }
             }
         }
+        stage('bootRun the application') {
+            steps {
+                container('gradle') {
+                    sh 'gradle bootrun'
+                }
+            }
+        }
+        
     }
 }
