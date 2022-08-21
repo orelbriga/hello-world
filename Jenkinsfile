@@ -8,7 +8,7 @@ pipeline {
         spec:
           containers:
           - name: gradle
-            image: gradle:7.5.1-jdk11
+            image: openjdk:11
             command:
             - cat
             tty: true
