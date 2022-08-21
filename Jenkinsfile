@@ -8,22 +8,25 @@ pipeline {
         spec:
           containers:
           - name: gradle
-            image: openjdk:11
+            image: gradle:7.5.1-jdk11-alpine
             command:
             - cat
             tty: true
             volumeMounts:
               - mountPath: /var/run/docker.sock
                 name: docker-socket-volume
+              - mountPath: "/root/.ssh"
+                name: "volume-0"
             securityContext:
               privileged: true
-              runAsUser: 0
+              runAsUser: 1000
           volumes:
-            - name: docker-socket-volume
-              hostPath:
+            - hostPath:
+                name: docker-socket-volume
                 path: /var/run/docker.sock
-                type: Socket
-                '''
+            - hostPath:
+                path: "/root/.ssh"
+                name: "volume-0" '''
         }
     }
     stages {
