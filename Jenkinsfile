@@ -40,9 +40,7 @@ pipeline {
         stage('Build-Docker-Image') {
             steps {
                 container('docker') {
-                    script {
-                        dockerImage = docker.build
-                    }
+                    sh 'docker build -t orelbriga/hello-world-app:latest .'
 
                 }
             }
