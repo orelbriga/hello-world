@@ -33,6 +33,7 @@ pipeline {
             steps {
                 container('gradle') {
                     sh '''gradle clean build'''
+                    archiveArtifacts artifacts: '*.jar', onlyIfSuccessful: true
                 }
             }
         }
