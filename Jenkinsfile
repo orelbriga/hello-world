@@ -17,6 +17,7 @@ pipeline {
                 name: docker-socket-volume
             securityContext:
               privileged: true
+              runAsUser: 0
           volumes:
             - name: docker-socket-volume
               hostPath:
