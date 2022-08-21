@@ -33,7 +33,7 @@ pipeline {
             steps {
                 container('gradle') {
                     sh '''gradle clean build'''
-                    archiveArtifacts artifacts: '/home/jenkins/agent/workspace/Hello-World/build/libs/hello-world-0.0.1-SNAPSHOT.jar', onlyIfSuccessful: true
+                    archiveArtifacts artifacts: 'build/libs/hello-world-0.0.1-SNAPSHOT.jar', onlyIfSuccessful: true
                 }
             }
         }
