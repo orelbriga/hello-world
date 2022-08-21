@@ -37,7 +37,7 @@ pipeline {
                 }
             }
         }
-        stage('Build-Docker-Image') {
+        stage('Build Docker Image') {
             steps {
                 container('docker') {
                     sh 'docker build -t orelbriga/hello-world-app:latest .'
