@@ -12,21 +12,20 @@ pipeline {
             command:
             - cat
             tty: true
+          - name: docker
+            image: docker:latest
+            command:
+            - cat
+            tty: true
             volumeMounts:
-              - mountPath: /var/run/docker.sock
-                name: docker-socket-volume
-              - mountPath: "/root/.ssh"
-                name: "volume-0"
-            securityContext:
-              privileged: true
-              runAsUser: 1000
+             - mountPath: /var/run/docker.sock
+               name: docker-sock
           volumes:
-            - hostPath:
-                name: docker-socket-volume
-                path: /var/run/docker.sock
-            - hostPath:
-                path: "/root/.ssh"
-                name: "volume-0" '''
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock 
+              '''
+
         }
     }
     stages {
@@ -37,10 +36,12 @@ pipeline {
                 }
             }
         }
-        stage ('Build & Push docker image') {
+        stage('Build-Docker-Image') {
             steps {
-                    sh 'docker build -t orelbriga/hello-world-app:latest .'
+                container('docker') {
+                    sh 'docker build -t ss69261/testing-image:latest .'
                 }
             }
         }
     }
+}
