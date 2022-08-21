@@ -21,7 +21,7 @@ pipeline {
             - name: docker-socket-volume
               hostPath:
                 path: /var/run/docker.sock
-                type: File '''
+                '''
         }
     }
     stages {
