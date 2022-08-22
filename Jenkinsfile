@@ -45,28 +45,11 @@ pipeline {
             steps {
                 container('docker') {
                     sh 'docker build -t orelbriga/hello-world-app:latest .'
+                    sh 'echo $dockerhub_PSW'
 
                 }
-            }
-        }
-
-        stage('Login') {
-
-            steps {
-                container('docker') {
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                }
-            }
-        }
-
-        stage('Push') {
-
-            steps {
-                container('docker') {
-                    sh 'docker push orelbriga/hello-world-app:latest'
             }
         }
     }
-}
 }
 
