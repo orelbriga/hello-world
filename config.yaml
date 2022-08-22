@@ -1,3 +1,4 @@
+#Deploy Config
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,10 +13,25 @@ spec:
       labels:
         app: hello-world-app
     spec:
-      containers:service.yaml
+      containers:
         - name: hello-world-app
           image: orelbriga/hello-world-app:$BUILD_NUMBER
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           tty: true
+
+---
+#Service Config
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-k8s-svc
+spec:
+  selector:
+    app: hello-world-app
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+  type: NodePort
