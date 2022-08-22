@@ -52,6 +52,17 @@ pipeline {
                 }
             }
         }
+        stage('Push image to Registry') {
+            steps {
+                container('docker') {
+                    script {
+                        docker.withRegistry( '', registryCredential ) {
+                            dockerImage.push()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
