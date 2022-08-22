@@ -28,6 +28,10 @@ pipeline {
 
         }
     }
+    environment {
+        DOCKERHUB_CREDENTIALS=credentials('dockerhub')
+    }
+
     stages {
         stage('Test and Build the app') {
             steps {
@@ -45,5 +49,24 @@ pipeline {
                 }
             }
         }
+
+        stage('Login') {
+
+            steps {
+                container('docker') {
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                }
+            }
+        }
+
+        stage('Push') {
+
+            steps {
+                container('docker') {
+                    sh 'docker push orelbriga/hello-world-app:latest'
+            }
+        }
     }
 }
+}
+
