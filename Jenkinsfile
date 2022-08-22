@@ -35,7 +35,7 @@ pipeline {
     }
 
     stages {
-        stage('Test and Build the app') {
+        stage('Test and build the app') {
             steps {
                 container('gradle') {
                     sh '''gradle clean build'''
@@ -43,7 +43,7 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Image') {
+        stage('Build docker image') {
             steps {
                 container('docker') {
                     script {
@@ -52,7 +52,7 @@ pipeline {
                 }
             }
         }
-        stage('Push image to Registry') {
+        stage('Push image to registry') {
             steps {
                 container('docker') {
                     script {
@@ -60,6 +60,13 @@ pipeline {
                             dockerImage.push()
                         }
                     }
+                }
+            }
+        }
+        stage('Deploy app to k8s') {
+            steps {
+                script{
+                    kubernetesDeploy (configs: 'yamls/')
                 }
             }
         }
