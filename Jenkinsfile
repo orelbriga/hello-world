@@ -29,7 +29,9 @@ pipeline {
         }
     }
     environment {
-        DOCKERHUB_CREDENTIALS=credentials('dockerhub')
+        registry = "orelbriga/hello-world-app"
+        registryCredential = 'dckr_pat_OIOSjBFV1gQa9EfTVaoTlBtKsXU'
+        dockerImage = ''
     }
 
     stages {
@@ -44,9 +46,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 container('docker') {
-                    sh 'docker build -t orelbriga/hello-world-app:latest .'
-                    sh 'echo $dockerhub_PSW'
-
+                    script {
+                        dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    }
                 }
             }
         }
