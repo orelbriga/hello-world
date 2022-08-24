@@ -68,8 +68,10 @@ pipeline {
         }
         stage('Deploy app to k8s') {
             steps {
-                script{
-                    kubernetesDeploy (configs: 'config.yaml', kubeconfigId: 'k8sconfig')
+                container('docker') {
+                    script {
+                        kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
+                    }
                 }
             }
         }
