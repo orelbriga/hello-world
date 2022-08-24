@@ -47,7 +47,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        dockerImage = docker.build registry + ":latest"
+                        dockerImage = docker.build registry
                     }
                 }
             }
@@ -57,7 +57,7 @@ pipeline {
                 container('docker') {
                     script {
                         docker.withRegistry( '', registryCredential ) {
-                            dockerImage.push()
+                            dockerImage.push("latest")
                         }
                     }
                 }
