@@ -35,7 +35,7 @@ pipeline {
         REPOSITORY = "orelbriga/hello-world-app"
         registryCredential = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
-        TAG = $BUILD_NUMBER
+        TAG = $(BUILD_NUMBER)
     }
 
     stages {
