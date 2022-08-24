@@ -71,6 +71,7 @@ pipeline {
                 container('docker') {
                     script {
                         kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
+                        containerLog 'hello-world-app-66'
                     }
                 }
             }
