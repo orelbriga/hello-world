@@ -32,9 +32,10 @@ pipeline {
         }
     }
     environment {
-        registry = "orelbriga/hello-world-app"
-        registryCredential = 'dockerhub'
+        REPOSITORY = "orelbriga/hello-world-app"
+        registryCredential = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
+        TAG = $BUILD_NUMBER
     }
 
     stages {
@@ -50,7 +51,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        dockerImage = docker.build registry
+                        dockerImage = docker.build REPOSITORY
                     }
                 }
             }
@@ -60,7 +61,7 @@ pipeline {
                 container('docker') {
                     script {
                         docker.withRegistry( '', registryCredential ) {
-                            dockerImage.push("$BUILD_NUMBER")
+                            dockerImage.push("TAG")
                         }
                     }
                 }
@@ -71,9 +72,9 @@ pipeline {
                 container('docker') {
                     script {
                         kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
-                        containerLog 'hello-world-app-66'
                     }
                 }
+                containerLog 'hello-world-app-66'
             }
         }
     }
