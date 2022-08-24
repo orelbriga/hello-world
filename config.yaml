@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hello-world-app-$BUILD_NUMBER
-          image: REPOSITORY:TAG
+          image: hello-world-app:$BUILD_NUMBER
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

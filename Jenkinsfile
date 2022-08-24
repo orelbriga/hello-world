@@ -35,7 +35,6 @@ pipeline {
         REPOSITORY = "orelbriga/hello-world-app"
         registryCredential = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
-        TAG = $(BUILD_NUMBER)
     }
 
     stages {
@@ -61,7 +60,7 @@ pipeline {
                 container('docker') {
                     script {
                         docker.withRegistry( '', registryCredential ) {
-                            dockerImage.push("TAG")
+                            dockerImage.push("$BUILD_NUMBER")
                         }
                     }
                 }
