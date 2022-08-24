@@ -30,7 +30,7 @@ pipeline {
     }
     environment {
         registry = "orelbriga/hello-world-app"
-        registryCredential = 'dckr_pat_OIOSjBFV1gQa9EfTVaoTlBtKsXU'
+        registryCredential = 'dockerhub'
         dockerImage = ''
     }
 
