@@ -21,7 +21,8 @@ pipeline {
              - mountPath: /var/run/docker.sock
                name: docker-sock
             securityContext:
-              privileged: true             
+              privileged: true
+              runAsUser: 0             
           volumes:
           - name: docker-sock
             hostPath:
