@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hello-world-app-$BUILD_NUMBER
-          image: orelbriga/hello-world-app:$BUILD_NUMBER
+          image: REPOSITORY:TAG
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
