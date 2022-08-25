@@ -59,7 +59,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        docker.withRegistry( '', registryCredential ) {
+                        docker.withRegistry('', registryCredential) {
                             dockerImage.push("$BUILD_NUMBER")
                         }
                     }
@@ -73,9 +73,14 @@ pipeline {
                         kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
                     }
                 }
-                containerLog 'hello-world-app-66'
+            }
+        }
+        stage('Validate App is running') {
+            step {
+                withKubeConfig([credentialsId: 'kubectl']) {
+                    sh 'kubectl get pods'
+                }
             }
         }
     }
 }
-
