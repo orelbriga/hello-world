@@ -77,10 +77,12 @@ pipeline {
         }
         stage('Validate App is running') {
             steps {
-                withKubeConfig([credentialsId: 'secret-jenkins']) {
-                    sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"'
-                    sh 'chmod u+x ./kubectl'
-                    sh './kubectl get pods'
+                container('docker') {
+                    withKubeConfig([credentialsId: 'secret-jenkins']) {
+                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"'
+                        sh 'chmod u+x ./kubectl'
+                        sh './kubectl get pods'
+                    }
                 }
             }
         }
