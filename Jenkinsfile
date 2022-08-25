@@ -79,7 +79,7 @@ pipeline {
             steps {
                 container('docker') {
                     withKubeConfig([credentialsId: 'secret-jenkins']) {
-                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"'
+                        sh 'wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"'
                         sh 'chmod u+x ./kubectl'
                         sh './kubectl get pods'
                     }
