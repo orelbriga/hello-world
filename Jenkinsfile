@@ -77,7 +77,7 @@ pipeline {
         }
         stage('Validate App is running') {
             steps {
-                withKubeConfig([credentialsId: 'kubectl']) {
+                withKubeConfig([credentialsId: 'k8sconfig']) {
                     sh 'kubectl get pods'
                 }
             }
