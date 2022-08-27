@@ -6,11 +6,11 @@ pipeline {
         }
     }
     environment {
-        REPOSITORY = "orelbriga/hello-world-app"  // Image location
+        REPOSITORY = "orelbriga/hello-world-app"  // Images location
         registryCredential = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
-        POD_STATE = ''    // Validation after deploy stage
-        APP_POD_NAME = ''  // Validation after deploy stage
+//        POD_STATE = ''    // Validation after deploy stage
+//        APP_POD_NAME = ''  // Validation after deploy stage
     }
 
     stages {
