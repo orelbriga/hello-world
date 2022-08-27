@@ -88,7 +88,7 @@ pipeline {
                               POD_STATE=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\')
                               APP_POD_NAME=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
                               ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log '''
-                            archiveArtifacts artifacts: '$APP_POD_NAME.log', onlyIfSuccessful: true
+                            archiveArtifacts artifacts: 'hello-world-app-*.log', onlyIfSuccessful: true
                         }
                     }
                 }
