@@ -12,7 +12,7 @@ pipeline {
     }
 
     stages {
-        stage('Test and build the app') {
+        stage('Gradle: Test & Build') {
             steps {
                 container('gradle') {
                     echo "compiling code + running  tests + creating jar: "
@@ -22,7 +22,7 @@ pipeline {
                 }
             }
         }
-        stage('Build docker image and push to registry') {
+        stage('Build docker image & push to registry') {
             steps {
                 container('docker') {
                     script {
@@ -39,15 +39,13 @@ pipeline {
         }
         stage('Deploy app to k8s') {
             steps {
-                container('docker') {
-                    script {
-                        echo "deploy the app to the k8s cluster using yaml files - with kube-config as an approval: "
-                        kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
-                    }
+            container('docker') {
+                    echo "deploy the app to the k8s cluster using yaml files - with kube-config as an approval: "
+                    kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
                 }
             }
         }
-        stage('Validate App is running') {
+        stage('Validate App is running + Logs') {
             steps {
                 container('docker') {
                     script {
@@ -57,31 +55,25 @@ pipeline {
                                chmod +x ./kubectl
                                sleep 10s '''
 
+                            def APP_POD_NAME=sh(
+                                    script: './kubectl get pod | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\'',
+                                    returnStdout: true
+                            ).trim()
+
                             def POD_STATE=sh(
                                     script: './kubectl get po | grep hello-world-app-${BUILD_NUMBER}-* | awk \'{print $3; exit}\'',
                                     returnStdout: true
                             ).trim()
 
+                            sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
+                            archiveArtifacts artifacts: 'hello-world-app-*.log'
+
                             if (POD_STATE != "Running") {
-                                error("Application pod is not healthy, check app log")
+                                error("Application pod ${APP_POD_NAME} is not healthy, check app log")
                             }
                             else {
-                                echo "Application pod state is ${POD_STATE}!"
+                                echo "Application pod ${APP_POD_NAME} state is ${POD_STATE}!"
                             }
-                        }
-                    }
-                }
-            }
-        }
-        stage('Generate app logs') {
-            steps {
-                container('docker') {
-                    script {
-                        withKubeConfig([credentialsId: 'secret-jenkins']) {
-                            echo "collecting logs from the app:"
-                            sh ''' APP_POD_NAME=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
-                               ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log '''
-                            archiveArtifacts artifacts: 'hello-world-app-*.log'
                         }
                     }
                 }
