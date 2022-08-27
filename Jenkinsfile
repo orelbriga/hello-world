@@ -66,15 +66,22 @@ pipeline {
                             sh '''wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"
                               chmod +x ./kubectl
                               sleep 10s'''
+                            sh  '''APP_POD_NAME=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
+                              ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log '''
+                            echo "archiving the app log as an artifact:"
+                            archiveArtifacts artifacts: 'hello-world-app-*.log', onlyIfSuccessful: true
+
                             POD_STATE = sh (
                                     script: './kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\'',
                                     returnStdout: true
                             ).trim()
                             echo "status is $POD_STATE"
-                            sh  '''APP_POD_NAME=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
-                              ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log '''
-                            echo "archiving the app log as an artifact:"
-                            archiveArtifacts artifacts: 'hello-world-app-*.log', onlyIfSuccessful: true
+                            if (POD_STATE =! "Running") {
+                                error("The application pod is not healthy, check app log")
+                            }
+                            else {
+                                echo "The application pod is $POD_STATE!!"
+                            }
                         }
                     }
                 }
