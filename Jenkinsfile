@@ -32,10 +32,11 @@ pipeline {
         }
     }
     environment {
-        REPOSITORY = "orelbriga/hello-world-app"
+        REPOSITORY = "orelbriga/hello-world-app"  // Image location
         registryCredential = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
-        POD_STATE = ''
+        POD_STATE = ''    // Validation after deploy stage
+        APP_POD_NAME = ''  // Validation after deploy stage
     }
 
     stages {
@@ -79,13 +80,15 @@ pipeline {
         stage('Validate App is running') {
             steps {
                 container('docker') {
-                    withKubeConfig([credentialsId: 'secret-jenkins']) {
-                        sh '''wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"
+                    script {
+                        withKubeConfig([credentialsId: 'secret-jenkins']) {
+                            sh '''wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"
                               chmod +x ./kubectl
-                              POD_STATE=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\')
-                              echo $POD_STATE
+                              POD_STATE = $(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\')
+                              APP_POD_NAME = $(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
+                              ./kubectl logs $(APP_POD_NAME)                                                        
                               '''
-
+                        }
                     }
                 }
             }
