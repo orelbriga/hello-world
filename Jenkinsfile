@@ -43,9 +43,9 @@ pipeline {
         stage('Test and build the app') {
             steps {
                 container('gradle') {
-                    sh ''' echo "compiling code + running  tests + creating jar: "
-                           gradle clean build
-                           echo "saving jar as artifact: "'''
+                    echo "compiling code + running  tests + creating jar: "
+                    sh "gradle clean build"
+                    echo "saving jar as an artifact:"
                     archiveArtifacts artifacts: 'build/libs/hello-world-0.0.1-SNAPSHOT.jar', onlyIfSuccessful: true
                 }
             }
@@ -54,6 +54,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
+                        echo "building docker image:"
                         dockerImage = docker.build REPOSITORY
                     }
                 }
@@ -63,7 +64,9 @@ pipeline {
             steps {
                 container('docker') {
                     script {
+                        echo "Login to private repo on dockerhub:"
                         docker.withRegistry('', registryCredential) {
+                            echo "push the new image to the repo with the build number as a tag: "
                             dockerImage.push("$BUILD_NUMBER")
                         }
                     }
