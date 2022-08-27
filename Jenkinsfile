@@ -60,16 +60,16 @@ pipeline {
                                ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log '''
 
                             def APP_POD_NAME=sh(script: '$APP_POD_NAME',returnStdout: true)
-                            echo "Name is $APP_POD_NAME"
+                            echo "Name is ${APP_POD_NAME}"
                             archiveArtifacts artifacts: 'hello-world-app-*.log'
 
                             def POD_STATE=sh(
                                     script: './kubectl get pods | grep hello-world-app-${BUILD_NUMBER}-* | awk \'{print $3; exit}\'',
                                     returnStdout: true
                             ).trim()
-                            echo "STATE1 = $POD_STATE"
+                            echo "STATE1=${POD_STATE}"
 
-                            if (POD_STATE != "Running") {
+                            if (POD_STATE!="Running") {
                                 error("Application pod is not healthy, check app log")
                             }
                             else {
