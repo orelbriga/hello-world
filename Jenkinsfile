@@ -66,7 +66,7 @@ pipeline {
                     script {
                         echo "Login to private repo on dockerhub:"
                         docker.withRegistry('', registryCredential) {
-                            echo "push the new image to the repo with the build number as a tag: "
+                            echo "push the new image to repo with the build number as a tag: "
                             dockerImage.push("$BUILD_NUMBER")
                         }
                     }
@@ -77,6 +77,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
+                        echo "deploy the app to the k8s cluster using yaml files - with kube-config as an approval: "
                         kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
                     }
                 }
@@ -87,12 +88,14 @@ pipeline {
                 container('docker') {
                     script {
                         withKubeConfig([credentialsId: 'secret-jenkins']) {
+                            echo "installing kubectl on the container to check the application's pod state + logs:"
                             sh '''wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"
                               chmod +x ./kubectl
                               sleep 10s
                               POD_STATE=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\')
                               APP_POD_NAME=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
                               ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log '''
+                            echo "archiving the app log as an artifact:"
                             archiveArtifacts artifacts: 'hello-world-app-*.log', onlyIfSuccessful: true
                         }
                     }
