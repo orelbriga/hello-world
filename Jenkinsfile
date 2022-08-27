@@ -82,8 +82,8 @@ pipeline {
                     withKubeConfig([credentialsId: 'secret-jenkins']) {
                         sh '''wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"
                               chmod +x ./kubectl
-                              POD_STATE = ./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\'
-                              echo POD_STATE
+                              POD_STATE=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\')
+                              echo $POD_STATE
                               '''
 
                     }
