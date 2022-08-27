@@ -35,6 +35,7 @@ pipeline {
         REPOSITORY = "orelbriga/hello-world-app"
         registryCredential = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
+        POD_STATE = ''
     }
 
     stages {
@@ -79,9 +80,12 @@ pipeline {
             steps {
                 container('docker') {
                     withKubeConfig([credentialsId: 'secret-jenkins']) {
-                        sh 'wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"'
-                        sh 'chmod u+x ./kubectl'
-                        sh './kubectl logs $(JENKINS_AGENT_NAME) '
+                        sh '''wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"
+                              chmod +x ./kubectl
+                              POD_STATE = ./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\'
+                              echo POD_STATE
+                              '''
+
                     }
                 }
             }
