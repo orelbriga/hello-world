@@ -55,9 +55,7 @@ pipeline {
                             echo "installing kubectl on the container to check the application's pod state + logs:"
                             sh ''' wget "https://storage.googleapis.com/kubernetes-release/release/v1.24.1/bin/linux/amd64/kubectl"
                                chmod +x ./kubectl
-                               sleep 10s
-                               APP_POD_NAME=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
-                               ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log '''
+                               sleep 10s '''
 
                             def POD_STATE=sh(
                                     script: './kubectl get po | grep hello-world-app-${BUILD_NUMBER}-* | awk \'{print $3; exit}\'',
@@ -70,7 +68,20 @@ pipeline {
                             else {
                                 echo "Application pod state is ${POD_STATE}!"
                             }
-
+                        }
+                    }
+                }
+            }
+        }
+        stage('Generate app logs') {
+            steps {
+                container('docker') {
+                    script {
+                        withKubeConfig([credentialsId: 'secret-jenkins']) {
+                            echo "collecting logs from the app:"
+                            sh ''' APP_POD_NAME=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
+                               ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log '''
+                            archiveArtifacts artifacts: 'hello-world-app-*.log'
                         }
                     }
                 }
