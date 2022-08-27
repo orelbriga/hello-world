@@ -57,9 +57,12 @@ pipeline {
                                chmod +x ./kubectl
                                sleep 10s  '''
 
-                            def POD_STATE = sh(
-                                    script: './kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $3; exit}\'', returnStdout: true
+                            def POD_STATE=sh(
+                                    script: './kubectl get po | grep hello-world-app-${BUILD_NUMBER}-* | awk \'{print $3; exit}\'',
+                                    returnStdout: true
                             ).trim()
+                            echo "STATE1 = $POD_STATE"
+                            echo 'STATE2 = $POD_STATE'
                             if (POD_STATE != "Running") {
                                 error("Application pod is not healthy, check app log")
                             }
@@ -70,7 +73,6 @@ pipeline {
                             sh ''' APP_POD_NAME=$(./kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\')
                                 ./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log  '''
                             archiveArtifacts artifacts: 'hello-world-app-*.log'
-
 
                         }
                     }
