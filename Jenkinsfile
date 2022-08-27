@@ -3,7 +3,6 @@ pipeline {
     agent {
         kubernetes {
             yamlFile 'agent-pod.yaml'
-
         }
     }
     environment {
