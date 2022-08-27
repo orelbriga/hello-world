@@ -72,7 +72,7 @@ pipeline {
                                 error("Application pod ${APP_POD_NAME} is not healthy, check app log")
                             }
                             else {
-                                echo "Application pod ${APP_POD_NAME} state is ${POD_STATE}!"
+                                echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
                             }
                         }
                     }
