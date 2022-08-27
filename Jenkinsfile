@@ -9,8 +9,6 @@ pipeline {
         REPOSITORY = "orelbriga/hello-world-app"  // Images location
         registryCredential = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
-//        POD_STATE = ''    // Validation after deploy stage
-//        APP_POD_NAME = ''  // Validation after deploy stage
     }
 
     stages {
@@ -76,7 +74,7 @@ pipeline {
                                     returnStdout: true
                             ).trim()
                             echo "status is $POD_STATE"
-                            if (POD_STATE =! "Running") {
+                            if (POD_STATE != "Running") {
                                 error("The application pod is not healthy, check app log")
                             }
                             else {
