@@ -56,17 +56,20 @@ pipeline {
                                sleep 10s '''
 
                             def APP_POD_NAME=sh(
-                                    script: './kubectl get pod | grep hello-world-app-$BUILD_NUMBER-* | awk \'{print $1; exit}\'',
+                                    script: './kubectl get pod | grep hello-world-app-$BUILD_NUMBER-* | \
+                                    awk \'{print $1; exit}\'',
                                     returnStdout: true
                             ).trim()
 
                             def POD_STATE=sh(
-                                    script: './kubectl get po | grep hello-world-app-${BUILD_NUMBER}-* | awk \'{print $3; exit}\'',
+                                    script: './kubectl get po | grep hello-world-app-${BUILD_NUMBER}-* | \
+                                    awk \'{print $3; exit}\'',
                                     returnStdout: true
                             ).trim()
 
                             def STATUS_CODE=sh(
-                                    script: """./kubectl exec -ti ${APP_POD_NAME} -- curl -IL localhost:8080 | grep HTTP """,
+                                    script: """./kubectl exec -ti ${APP_POD_NAME} -- \
+                                    curl -IL localhost:8080 | grep HTTP """,
                                     returnStdout: true
                             ).trim()
 
