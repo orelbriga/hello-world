@@ -66,8 +66,8 @@ pipeline {
                             ).trim()
 
                             def STATUS_CODE=sh(
-                                    script: """./kubectl exec -ti ${APP_POD_NAME} -- sh ;
-                                    curl -IL  localhost:8080 | grep HTTP """, returnStdout: true
+                                    script: """./kubectl exec -ti ${APP_POD_NAME} -- curl -IL localhost:8080 | grep HTTP """,
+                                    returnStdout: true
                             ).trim()
 
                             sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
