@@ -40,7 +40,7 @@ pipeline {
         stage('Deploy app to k8s') {
             steps {
             container('docker') {
-                    echo "deploy the app to the k8s cluster using yaml files - with kube-config as an approval: "
+                    echo "deploy the app to the k8s cluster using yaml files - with kube-config as an authenticator: "
                     kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
                 }
             }
