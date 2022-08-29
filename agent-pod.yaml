@@ -7,8 +7,8 @@ spec:
       command:
         - cat
       tty: true
-    - name: docker:latest
-      image:
+    - name: docker
+      image: docker:latest
       command:
         - cat
       tty: true
