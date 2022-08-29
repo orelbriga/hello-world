@@ -40,7 +40,7 @@ pipeline {
         }
         stage('Deploy app to k8s') {
             steps {
-            container('docker') {
+                container('docker') {
                     echo "deploy the app to the k8s cluster using yaml files - with kube-config as an authenticator: "
                     kubernetesDeploy(configs: 'config.yaml', kubeconfigId: 'k8sconfig')
                 }
@@ -56,19 +56,19 @@ pipeline {
                                chmod +x ./kubectl
                                sleep 10s '''
 
-                            def APP_POD_NAME=sh(
+                            def APP_POD_NAME = sh(
                                     script: './kubectl get pod | grep hello-world-app-$BUILD_NUMBER-* | \
                                     awk \'{print $1; exit}\'',
                                     returnStdout: true
                             ).trim()
 
-                            def POD_STATE=sh(
+                            def POD_STATE = sh(
                                     script: './kubectl get po | grep hello-world-app-${BUILD_NUMBER}-* | \
                                     awk \'{print $3; exit}\'',
                                     returnStdout: true
                             ).trim()
 
-                            def STATUS_CODE=sh(
+                            def STATUS_CODE = sh(
                                     script: """./kubectl exec -ti ${APP_POD_NAME} -- \
                                     curl -IL localhost:8080 | grep HTTP """,
                                     returnStdout: true
@@ -80,9 +80,22 @@ pipeline {
                             echo "Status code = ${STATUS_CODE}"
                             if (POD_STATE != "Running" || STATUS_CODE != "HTTP/1.1 200") {
                                 error("Application pod ${APP_POD_NAME} is not healthy, check app log")
-                            }
-                            else {
+                            } else {
                                 echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        post {
+            always {
+                stage('Image cleanup') {
+                    steps {
+                        container { 'docker' } {
+                            withKubeConfig([credentialsId: 'secret-jenkins']) {
+                                echo 'Deleting app image:'
+                                sh 'docker image rm orelbriga/hello-world-app:${BUILD_NUMBER}'
                             }
                         }
                     }
