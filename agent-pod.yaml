@@ -8,7 +8,7 @@ spec:
         - cat
       tty: true
     - name: docker
-      image: test
+      image: gradle:7.5.1-jdk11-jammy
       command:
         - cat
       tty: true
