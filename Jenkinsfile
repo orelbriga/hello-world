@@ -16,7 +16,7 @@ pipeline {
             steps {
                 container('gradle') {
                     echo "compiling code + running  tests + building jar: "
-                    sh """chmod +x gradlew
+                    sh """chmod +x ./gradlew
                           gradlew clean build"""
                     echo "saving jar as an artifact:"
                     archiveArtifacts artifacts: 'build/libs/hello-world-0.0.1-SNAPSHOT.jar', onlyIfSuccessful: true
