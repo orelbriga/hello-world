@@ -90,18 +90,12 @@ pipeline {
         }
 
     post {
-        always {
-            stage('Image cleanup') {
-                steps {
-                    container { 'docker' } {
-                        withKubeConfig([credentialsId: 'secret-jenkins']) {
-                            echo 'Deleting app image:'
-                            sh 'docker image rm orelbriga/hello-world-app:${BUILD_NUMBER}'
-                        }
-                    }
+        container { 'docker' } {
+            withKubeConfig([credentialsId: 'secret-jenkins']) {
+                echo 'Deleting app image:'
+                sh 'docker image rm orelbriga/hello-world-app:${BUILD_NUMBER}'
                 }
-            }
-        }
-    }
+           }
+       }
     }
 }
