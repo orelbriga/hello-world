@@ -7,7 +7,7 @@ pipeline {
     }
     environment {
         REPOSITORY = "orelbriga/hello-world-app"  // Images location
-        registryCredential = 'dockerhub'   // The credentials ID on jenkins
+        registryCredentialID = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
     }
 
@@ -30,7 +30,7 @@ pipeline {
                         echo "building docker image:"
                         dockerImage = docker.build REPOSITORY
                         echo "Login to private repo on dockerhub:"
-                        docker.withRegistry('', registryCredential) {
+                        docker.withRegistry('', registryCredentialID) {
                             echo "push the new image to repo with the build number as a tag: "
                             dockerImage.push("$BUILD_NUMBER")
                         }
@@ -83,20 +83,12 @@ pipeline {
                             } else {
                                 echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
                             }
+                            echo "Deleting the app image after successful deployment testing: "
+                            sh(script: "docker image rm $REPOSITORY:$BUILD_NUMBER")
                         }
                     }
                 }
             }
-        }
-    post {
-        always {
-            script {
-                docker.image('docker').withRun("sh") {
-                    sh "echo test"
-
-                    }
-               }
-           }
         }
     }
 }
