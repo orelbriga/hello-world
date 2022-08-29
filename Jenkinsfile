@@ -88,14 +88,15 @@ pipeline {
                 }
             }
         }
-
     post {
-        container { 'docker' } {
-            withKubeConfig([credentialsId: 'secret-jenkins']) {
-                echo 'Deleting app image:'
-                sh 'docker image rm orelbriga/hello-world-app:${BUILD_NUMBER}'
-                }
+        always {
+            script {
+                docker.image('docker').inside("-u 0:0") {
+                    sh "echo test"
+
+                    }
+               }
            }
-       }
+        }
     }
 }
