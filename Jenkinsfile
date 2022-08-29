@@ -91,7 +91,7 @@ pipeline {
     post {
         always {
             script {
-                docker.image('docker').inside("-u 0:0") {
+                docker.image('docker').withRun("sh") {
                     sh "echo test"
 
                     }
