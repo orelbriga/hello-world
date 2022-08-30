@@ -46,7 +46,7 @@ pipeline {
                 }
             }
         }
-        stage('Validate App is running + Logs') {
+        stage('Tests - Deploy') {
             steps {
                 container('docker') {
                     script {
@@ -74,6 +74,10 @@ pipeline {
                                     returnStdout: true
                             ).trim()
 
+                            def APP_POD_NAME2 = sh(
+                                    script: '$JENKINS_AGENT_NAME', returnStdout: true
+                            ).trim()
+
                             sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
                             archiveArtifacts artifacts: 'hello-world-app-*.log'
 
@@ -83,8 +87,7 @@ pipeline {
                             } else {
                                 echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
                             }
-                            echo "Deleting the app image after successful deployment testing: "
-                            sh(script: "docker image rm $REPOSITORY:$BUILD_NUMBER")
+                            sh "POD name1 is ${APP_POD_NAME} and POD name2 is ${APP_POD_NAME2}"
                         }
                     }
                 }
