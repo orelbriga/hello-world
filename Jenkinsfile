@@ -87,6 +87,7 @@ pipeline {
                             } else {
                                 echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
                             }
+                            echo 'pod name2 is $JENKINS_AGENT_NAME'
                             sh "POD name1 is ${APP_POD_NAME} and POD name2 is ${APP_POD_NAME2}"
                         }
                     }
