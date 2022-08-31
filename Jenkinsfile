@@ -80,14 +80,29 @@ pipeline {
                             echo "Sending GET request to the application, Status code = ${STATUS_CODE}"
                             if (POD_STATE != "Running" || STATUS_CODE != "HTTP/1.1 200") {
                                 error("Application pod ${APP_POD_NAME} is not healthy, check app log")
-                            } else {
+                            }
+                            else {
                                 echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
                             }
-
                         }
                     }
                 }
             }
         }
-    }
+        stage('Terminate app & Image cleanup') {
+            steps {
+                container('docker') {
+                    withKubeConfig([credentialsId: 'secret-jenkins']) {
+                        echo "Deployment tests passed successfully - Terminate the app: "
+                        sh '''kubectl delete deploy hello-world-app-${BUILD_NUMBER}
+                              sleep 5s'''
+
+                        echo "Delete unused app image: "
+                        sh '''docker image'''
+                    }
+
+                    }
+                }
+            }
+        }
 }
