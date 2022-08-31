@@ -94,7 +94,7 @@ pipeline {
                 container('docker') {
                     withKubeConfig([credentialsId: 'secret-jenkins']) {
                         echo "Deployment tests passed successfully - Terminating the app: "
-                        sh '''kubectl delete deploy hello-world-app-${BUILD_NUMBER}
+                        sh '''./kubectl delete deployment,services -l app=hello-world-app-${BUILD_NUMBER}
                               sleep 5s'''
 
                         echo "Delete unused app image: "
