@@ -74,7 +74,7 @@ pipeline {
                                     returnStdout: true
                             ).trim()
 
-                            echo 'pod name2 is $JENKINS_AGENT_NAME'
+                            echo "pod name2 is $JENKINS_AGENT_NAME"
 
                             def APP_POD_NAME2 = sh(
                                     script: "$JENKINS_AGENT_NAME", returnStdout: true
