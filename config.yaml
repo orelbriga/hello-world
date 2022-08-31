@@ -5,7 +5,8 @@ metadata:
   name: hello-world-app-$BUILD_NUMBER
 spec:
   selector:
-    app: hello-world-app-$BUILD_NUMBER
+    matchLabels:
+      app: hello-world-app-$BUILD_NUMBER
   replicas: 1
   template:
     metadata:
