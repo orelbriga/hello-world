@@ -100,6 +100,7 @@ pipeline {
 
                         echo "Delete unused app image: "
                         sh '''docker image rm orelbriga/hello-world-app:$BUILD_NUMBER
+                              sleep 2s      
                               docker image prune -f --filter="dangling=true"  '''
                     }
                 }
