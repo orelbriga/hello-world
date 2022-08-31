@@ -75,7 +75,7 @@ pipeline {
                             ).trim()
 
                             def APP_POD_NAME2 = sh(
-                                    script: '$JENKINS_AGENT_NAME', returnStdout: true
+                                    script: "$JENKINS_AGENT_NAME", returnStdout: true
                             ).trim()
 
                             sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
