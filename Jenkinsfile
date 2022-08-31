@@ -46,7 +46,7 @@ pipeline {
                 }
             }
         }
-        stage('Tests - Deploy') {
+        stage('Deployment Tests') {
             steps {
                 container('docker') {
                     script {
@@ -74,23 +74,16 @@ pipeline {
                                     returnStdout: true
                             ).trim()
 
-                            echo "pod name2 is $JENKINS_AGENT_NAME"
-
-                            def APP_POD_NAME2 = sh(
-                                    script: "$JENKINS_AGENT_NAME", returnStdout: true
-                            ).trim()
-
                             sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
                             archiveArtifacts artifacts: 'hello-world-app-*.log'
 
-                            echo "Status code = ${STATUS_CODE}"
+                            echo "Sending GET request to the application, Status code = ${STATUS_CODE}"
                             if (POD_STATE != "Running" || STATUS_CODE != "HTTP/1.1 200") {
                                 error("Application pod ${APP_POD_NAME} is not healthy, check app log")
                             } else {
                                 echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
                             }
 
-                            sh "POD name1 is ${APP_POD_NAME} and POD name2 is ${APP_POD_NAME2}"
                         }
                     }
                 }
