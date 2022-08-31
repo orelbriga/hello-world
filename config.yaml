@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hello-world-app-$BUILD_NUMBER
+  labels:
+    app: hello-world-app-$BUILD_NUMBER
 spec:
   selector:
     matchLabels:
@@ -16,7 +18,7 @@ spec:
       containers:
         - name: hello-world-app-$BUILD_NUMBER
           image: orelbriga/hello-world-app:$BUILD_NUMBER
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           tty: true
@@ -27,6 +29,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hello-world-svc-$BUILD_NUMBER
+  labels:
+    app: hello-world-app-$BUILD_NUMBER
 spec:
   selector:
     app: hello-world-app-$BUILD_NUMBER
