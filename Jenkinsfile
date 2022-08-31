@@ -98,7 +98,7 @@ pipeline {
                               sleep 5s'''
 
                         echo "Delete unused app image: "
-                        sh '''docker images'''
+                        sh '''docker image rm orelbriga/hello-world-app:$BUILD_NUMBER'''
                     }
 
                     }
