@@ -1,9 +1,6 @@
 #!groovy
 pipeline {
-    agent {
-        kubernetes {
-            yamlFile 'agent-pod.yaml'
-        }
+
     }
     environment {
         REPOSITORY = "orelbriga/hello-world-app"  // Images location
@@ -11,7 +8,18 @@ pipeline {
         dockerImage = ''
     }
 
+    agent {
+        kubernetes {
+            yamlFile 'agent-pod.yaml'
+        }
+
     stages {
+        stage('Git Checkout') {
+        steps {
+            checkout([$class: 'GitSCM', branches: [[name: '*/draft']], extensions: [], userRemoteConfigs: /
+            [[url: 'https://github.com/orelbriga/hello-world.git']]])
+            }
+        }
         stage('Gradle: Test & Build') {
             steps {
                 container('gradle') {
@@ -32,7 +40,7 @@ pipeline {
                         echo "Login to private repo on dockerhub:"
                         docker.withRegistry('', registryCredentialID) {
                             echo "push the new image to repo with the build number as a tag: "
-                            dockerImage.push("$BUILD_NUMBER")
+                            dockerImage.push($BUILD_NUMBER)
                         }
                     }
                 }
