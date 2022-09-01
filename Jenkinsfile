@@ -14,12 +14,6 @@ pipeline {
         }
 
     stages {
-        stage('Git Checkout') {
-        steps {
-            checkout([$class: 'GitSCM', branches: [[name: '*/draft']], extensions: [], userRemoteConfigs: /
-            [[url: 'https://github.com/orelbriga/hello-world.git']]])
-            }
-        }
         stage('Gradle: Test & Build') {
             steps {
                 container('gradle') {
