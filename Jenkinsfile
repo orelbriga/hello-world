@@ -1,17 +1,15 @@
 #!groovy
 pipeline {
-
+    agent {
+        kubernetes {
+            yamlFile 'agent-pod.yaml'
+        }
     }
     environment {
         REPOSITORY = "orelbriga/hello-world-app"  // Images location
         registryCredentialID = 'dockerhub'   // The credentials ID on jenkins
         dockerImage = ''
     }
-
-    agent {
-        kubernetes {
-            yamlFile 'agent-pod.yaml'
-        }
 
     stages {
         stage('Gradle: Test & Build') {
@@ -34,7 +32,7 @@ pipeline {
                         echo "Login to private repo on dockerhub:"
                         docker.withRegistry('', registryCredentialID) {
                             echo "push the new image to repo with the build number as a tag: "
-                            dockerImage.push($BUILD_NUMBER)
+                            dockerImage.push("$BUILD_NUMBER")
                         }
                     }
                 }
