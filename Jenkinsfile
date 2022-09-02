@@ -68,35 +68,31 @@ pipeline {
                                     returnStdout: true
                             ).trim()
 
-//                             def STATUS_CODE = sh(
-//                                     script: """./kubectl exec -ti ${APP_POD_NAME} -- \
-//                                     curl -IL localhost:8080 | grep HTTP """,
-//                                     returnStdout: true
-//                             ).trim()
-
-                            sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
-                            archiveArtifacts artifacts: 'hello-world-app-*.log'
-
-//                             echo "Sending GET request to the application, Status code = ${STATUS_CODE}"
-//                             if (POD_STATE != "Running" || STATUS_CODE != "HTTP/1.1 200") {
-//                                 error("Application pod ${APP_POD_NAME} is not healthy, check app log")
-//                             }
-//                             else {
-//                                 echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
-//                             }
-
                             def NODE_PORT = sh(
                             script: "./kubectl get svc hello-world-svc-${BUILD_NUMBER} -o=jsonpath=\'{.spec.ports[].nodePort}\' ",
                             returnStdout: true
                             ).trim()
                             echo "NODE_PORT is $NODE_PORT"
 
-                            def CLUSTER_HOST_NAME = sh(
-                            script: "echo $HOSTNAME", returnStdout: true
+                            def CLUSTER_HOST_IP = sh(
+                            script: "./kubectl get pod -n kube-system $(kubectl get po -n kube-system | grep dns \
+                            |awk \'{print $1; exit}\') -o=jsonpath='{.status.hostIP}'", returnStdout: true
                             ).trim()
 
-                            def response = httpRequest "http://$CLUSTER_HOST_NAME:$NODE_PORT"
+                            def response = httpRequest "http://$CLUSTER_HOST_IP:$NODE_PORT"
                             println("Content: "+response.content)
+
+                            echo response.status
+
+                            sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
+                            archiveArtifacts artifacts: 'hello-world-app-*.log'
+
+                            if (POD_STATE != "Running" || response.status != "HTTP/1.1 200") {
+                                error("Application pod ${APP_POD_NAME} is not healthy, check app log")
+                            }
+                            else {
+                                echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
+                            }
                         }
                     }
                 }
