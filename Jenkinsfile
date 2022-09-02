@@ -68,16 +68,16 @@ pipeline {
                                     returnStdout: true
                             ).trim()
 
+                            def CLUSTER_HOST_IP = sh(
+                            script: './kubectl get pod -n kube-system $(./kubectl get po -n kube-system | grep dns \
+                            | awk \'{print $1; exit}\') -o=jsonpath=\'{.status.hostIP}\' ' , returnStdout: true
+                            ).trim()
+
                             def NODE_PORT = sh(
                             script: './kubectl get svc hello-world-svc-${BUILD_NUMBER} -o=jsonpath=\'{.spec.ports[].nodePort}\' ',
                             returnStdout: true
                             ).trim()
                             echo "NODE_PORT is $NODE_PORT"
-
-                            def CLUSTER_HOST_IP = sh(
-                            script: './kubectl get pod -n kube-system $(kubectl get po -n kube-system | grep dns \
-                            |awk \'{print $1; exit}\') -o=jsonpath=\'{.status.hostIP}\' ' , returnStdout: true
-                            ).trim()
 
                             def response = httpRequest "http://$CLUSTER_HOST_IP:$NODE_PORT"
                             println("Content: "+response.content)
