@@ -91,8 +91,11 @@ pipeline {
                             ).trim()
                             echo "NODE_PORT is $NODE_PORT"
 
-                            def response = httpRequest "http://localhost:$NODE_PORT"
-                            println("Status: "+response.status)
+                            def CLUSTER_HOST_NAME = sh(
+                            script: "echo $HOSTNAME", returnStdout: true
+                            ).trim()
+
+                            def response = httpRequest "http://$CLUSTER_HOST_NAME:$NODE_PORT"
                             println("Content: "+response.content)
                         }
                     }
