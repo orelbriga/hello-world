@@ -5,11 +5,11 @@ pipeline {
             yamlFile 'agent-pod.yaml'
         }
     }
-    environment {
-        REPOSITORY = "orelbriga/hello-world-app"  // Images location
-        registryCredentialID = 'dockerhub'   // The credentials ID on jenkins
-        dockerImage = ''
-    }
+//     environment {
+//         REPOSITORY = "orelbriga/hello-world-app"  // Images location
+//         registryCredentialID = 'dockerhub'   // The credentials ID on jenkins
+//         dockerImage = ''
+//     }
 
     stages {
         stage('Gradle: Test & Build') {
@@ -27,8 +27,10 @@ pipeline {
             steps {
                 container('docker') {
                     script {
+                        def REPOSITORY = "orelbriga/hello-world-app"
+                        def registryCredentialID = 'dockerhub'
                         echo "building docker image:"
-                        dockerImage = docker.build REPOSITORY
+                        def dockerImage = docker.build REPOSITORY
                         echo "Login to private repo on dockerhub:"
                         docker.withRegistry('', registryCredentialID) {
                             echo "push the new image to repo with the build number as a tag: "
@@ -81,7 +83,7 @@ pipeline {
                             echo "Sending GET request to the application: "
                             def response = httpRequest "http://$CLUSTER_HOST_IP:$NODE_PORT"
                             println("Content: "+response.content)
-                            sleep 5s
+                            sh "sleep 5s"
 
                             sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
                             archiveArtifacts artifacts: 'hello-world-app-*.log'
