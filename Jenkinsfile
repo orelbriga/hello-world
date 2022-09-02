@@ -86,7 +86,7 @@ pipeline {
 //                             }
 
                             def NODE_PORT = sh(
-                            script: '''./kubectl get svc hello-world-svc-$BUILD_NUMBER -o=jsonpath='{.items[0].spec.ports[].nodePort}' ''',
+                            script: """./kubectl get svc hello-world-svc-${BUILD_NUMBER} -o=jsonpath='{.items[0].spec.ports[].nodePort}' """,
                             returnStdout: true
                             ).trim()
                             echo "NODE_PORT is $NODE_PORT"
