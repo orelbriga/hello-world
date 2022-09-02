@@ -77,17 +77,16 @@ pipeline {
                             script: './kubectl get svc hello-world-svc-${BUILD_NUMBER} -o=jsonpath=\'{.spec.ports[].nodePort}\' ',
                             returnStdout: true
                             ).trim()
-                            echo "NODE_PORT is $NODE_PORT"
 
+                            echo "Sending GET request to the application: "
                             def response = httpRequest "http://$CLUSTER_HOST_IP:$NODE_PORT"
                             println("Content: "+response.content)
-
-                            echo response.status
+                            sleep 5s
 
                             sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
                             archiveArtifacts artifacts: 'hello-world-app-*.log'
 
-                            if (POD_STATE != "Running" || response.status != "HTTP/1.1 200") {
+                            if (POD_STATE != "Running" || response.status >= 400) {
                                 error("Application pod ${APP_POD_NAME} is not healthy, check app log")
                             }
                             else {
