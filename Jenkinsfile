@@ -91,9 +91,9 @@ pipeline {
                             ).trim()
                             echo "NODE_PORT is $NODE_PORT"
 
-//                             def response = httpRequest "http://localhost:$NODE_PORT/jenkins/api/json?pretty=true"
-//                             println("Status: "+response.status)
-//                             println("Content: "+response.content)
+                            def response = httpRequest "http://localhost:$NODE_PORT"
+                            println("Status: "+response.status)
+                            println("Content: "+response.content)
                         }
                     }
                 }
