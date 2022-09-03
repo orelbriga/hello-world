@@ -65,7 +65,7 @@ pipeline {
                             ).trim()
 
                             def POD_STATE = sh(
-                                    script: './kubectl get po | grep hello-world-app-${BUILD_NUMBER}-* | \
+                                    script: './kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | \
                                     awk \'{print $3; exit}\'',
                                     returnStdout: true
                             ).trim()
@@ -76,23 +76,23 @@ pipeline {
                             ).trim()
 
                             def NODE_PORT = sh(
-                            script: './kubectl get svc hello-world-svc-${BUILD_NUMBER} -o=jsonpath=\'{.spec.ports[].nodePort}\' ',
+                            script: './kubectl get svc hello-world-svc-$BUILD_NUMBER -o=jsonpath=\'{.spec.ports[].nodePort}\' ',
                             returnStdout: true
                             ).trim()
 
                             echo "Sending GET request to the application: "
-                            def response = httpRequest "http://$CLUSTER_HOST_IP:$NODE_PORT"
+                            def RESPONSE = httpRequest "http://$CLUSTER_HOST_IP:$NODE_PORT"
                             println("Content: "+response.content)
                             sh "sleep 5s"
 
-                            sh "./kubectl logs ${APP_POD_NAME} | tee ${APP_POD_NAME}.log"
+                            sh "./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log"
                             archiveArtifacts artifacts: 'hello-world-app-*.log'
 
-                            if (POD_STATE != "Running" || response.status >= 400) {
-                                error("Application pod ${APP_POD_NAME} is not healthy, check app log")
+                            if (POD_STATE != "Running" || RESPONSE.status >= 400) {
+                                error("Application pod $APP_POD_NAME is not healthy, check app log")
                             }
                             else {
-                                echo "Application pod ${APP_POD_NAME} is in ${POD_STATE} state!"
+                                echo "Application pod $APP_POD_NAME is in $POD_STATE state!"
                             }
                         }
                     }
