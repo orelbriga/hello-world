@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HelloWorldControllerTest {
 
     @Test
-    void helloWorld() {
+    void Test_helloWorld() {
         HelloWorldController controller = new HelloWorldController();
         String response = controller.helloWorld();
         assertEquals("Hello World",response);
