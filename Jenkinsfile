@@ -85,7 +85,7 @@ pipeline {
                             println("Content: "+RESPONSE.content)
                             sh "sleep 5s"
 
-                            sh "./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log"
+                            sh "./kubectl logs $APP_POD_NAME | tee ${APP_POD_NAME}.log"
                             archiveArtifacts artifacts: 'hello-world-app-*.log'
 
                             if (POD_STATE != "Running" || RESPONSE.status >= 400) {
