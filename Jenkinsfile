@@ -82,7 +82,7 @@ pipeline {
 
                             echo "Sending GET request to the application: "
                             def RESPONSE = httpRequest "http://$CLUSTER_HOST_IP:$NODE_PORT"
-                            println("Content: "+response.content)
+                            println("Content: "+RESPONSE.content)
                             sh "sleep 5s"
 
                             sh "./kubectl logs $APP_POD_NAME | tee $APP_POD_NAME.log"
