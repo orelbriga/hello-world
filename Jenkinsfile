@@ -5,12 +5,6 @@ pipeline {
             yamlFile 'agent-pod.yaml'
         }
     }
-//     environment {
-//         REPOSITORY = "orelbriga/hello-world-app"  // Images location
-//         registryCredentialID = 'dockerhub'   // The credentials ID on jenkins
-//         dockerImage = ''
-//     }
-
     stages {
         stage('Gradle: Test & Build') {
             steps {
