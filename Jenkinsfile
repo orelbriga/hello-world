@@ -54,19 +54,19 @@ pipeline {
 
                             def APP_POD_NAME = sh(
                                     script: './kubectl get pod | grep hello-world-app-$BUILD_NUMBER-* | \
-                                    awk \'{print $1; exit}\'',
+                                    awk \'{print $1}\'',
                                     returnStdout: true
                             ).trim()
 
                             def POD_STATE = sh(
                                     script: './kubectl get po | grep hello-world-app-$BUILD_NUMBER-* | \
-                                    awk \'{print $3; exit}\'',
+                                    awk \'{print $3}\'',
                                     returnStdout: true
                             ).trim()
 
                             def CLUSTER_HOST_IP = sh(
                             script: './kubectl get pod -n kube-system $(./kubectl get po -n kube-system | grep dns \
-                            | awk \'{print $1; exit}\') -o=jsonpath=\'{.status.hostIP}\' ' , returnStdout: true
+                            | awk \'{print $1}\') -o=jsonpath=\'{.status.hostIP}\' ' , returnStdout: true
                             ).trim()
 
                             def NODE_PORT = sh(
