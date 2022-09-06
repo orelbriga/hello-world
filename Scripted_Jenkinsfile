@@ -1,6 +1,6 @@
 #!groovy
 @Library("shared-library") _
-podTemplate(label: 'agent-pod', containers: [
+podTemplate(label: "agent-${env.JOB_NAME}-${env.BUILD_NUMBER}", containers: [
         containerTemplate(name: 'gradle', image: 'gradle:7.5.1-jdk11-jammy', imagePullPolicy: "IfNotPresent", \
         command: 'cat', ttyEnabled: true),
         containerTemplate(name: 'docker', image: 'docker', imagePullPolicy: 'IfNotPresent', command: 'cat',\
@@ -10,7 +10,7 @@ podTemplate(label: 'agent-pod', containers: [
                 hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
         ]
 ) {
-  node('agent-pod') {
+  node("agent-${env.JOB_NAME}-${env.BUILD_NUMBER}") {
     stage('Git checkout') {
       container('gradle') {
         checkout([$class: 'GitSCM', branches: [[name: '*/draft']], userRemoteConfigs: [[credentialsId: 'github-private',\
