@@ -13,11 +13,11 @@ spec:
   template:
     metadata:
       labels:
-        app: hello-world-app-${TAG}
+        app: hello-world-app-$TAG
     spec:
       containers:
-        - name: hello-world-app-${TAG}
-          image: orelbriga/hello-world-app:${TAG}
+        - name: hello-world-app-$TAG
+          image: orelbriga/hello-world-app:$TAG
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -28,12 +28,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-world-svc-${TAG}
+  name: hello-world-svc-$TAG
   labels:
-    app: hello-world-app-${TAG}
+    app: hello-world-app-$TAG
 spec:
   selector:
-    app: hello-world-app-${TAG}
+    app: hello-world-app-$TAG
   ports:
     - protocol: "TCP"
       port: 8080
