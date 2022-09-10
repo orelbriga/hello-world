@@ -1,11 +1,6 @@
 #!groovy
 @Library("shared-library") _
 def POD_LABEL = "agent-${env.JOB_NAME}-${env.BUILD_NUMBER}"
-def REGISTRY = "docker.io"
-def IMAGE_NAME = "hello-world-app"
-def REGISTRY_USER = "orelbriga"
-def REPOSITORY = REGISTRY_USER+"/"+IMAGE_BASE
-env.TAG = "${env.BUILD_NUMBER}"
 podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/agent-ci-cd.yaml'))
         {
           node(POD_LABEL) {
@@ -26,26 +21,19 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
             }
             stage('Build docker image & push to registry') {
               container('docker') {
+                env.REGISTRY = "docker.io"
+                env.IMAGE_NAME = "hello-world-app"
+                env.REGISTRY_USER = "orelbriga"
+                env.REPOSITORY = REGISTRY_USER+"/"+IMAGE_NAME
+                env.TAG = "${env.BUILD_NUMBER}"
                 script {
-                  withCredentials([[$class: 'UsernamePasswordMultiBinding',
-                                    credentialsId: 'dockerhub',
-                                    usernameVariable: 'DOCKER_HUB_USER',
-                                    passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
-                    sh """ echo ${DOCKER_HUB_PASSWORD} | docker login --username ${DOCKER_HUB_USER} --password-stdin
-                           docker build -t ${REPOSITORY}:${env.BUILD_NUMBER} .
-                           docker push ${REGISTRY}/${REPOSITORY}:${env.TAG}"""
+                  log.info "building docker image:"
+                  image.build()
+                  log.info "pushing image to registry - ${env.REGISTRY}"
+                  image.push()
                   }
-//                  def registryCredentialID = 'dockerhub'
-//                  log.info "building docker image:"
-//                  def dockerImage = docker.build REGISTRY+"/"+REPOSITORY
-//                  log.info "Login to private repo on dockerhub:"
-//                  docker.withRegistry('', registryCredentialID) {
-//                    log.info "push the new image to repo with the build number as a tag: "
-//                    dockerImage.push("$TAG")
-//                  }
                 }
               }
-            }
             stage('Deploy app to k8s') {
               container('docker') {
                 log.info "deploy the app to the k8s cluster using yaml files - with kube-config as an authenticator: "
@@ -62,8 +50,8 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
 
                     def APP_POD_NAME = deployVars.appName()
                     def POD_STATE = deployVars.podState()
-                    def CLUSTER_HOST_IP = deployVars.clusterHostIP()
-                    def NODE_PORT = deployVars.nodePort()
+//                    def CLUSTER_HOST_IP = deployVars.clusterHostIP()
+//                    def NODE_PORT = deployVars.nodePort()
 
                     deployVars.getRequest()
                     sleep 3
