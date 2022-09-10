@@ -25,14 +25,22 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
             stage('Build docker image & push to registry') {
               container('docker') {
                 script {
-                  def registryCredentialID = 'dockerhub'
-                  log.info "building docker image:"
-                  def dockerImage = docker.build REGISTRY+"/"+REPOSITORY
-                  log.info "Login to private repo on dockerhub:"
-                  docker.withRegistry('', registryCredentialID) {
-                    log.info "push the new image to repo with the build number as a tag: "
-                    dockerImage.push("$TAG")
+                  withCredentials([[$class: 'UsernamePasswordMultiBinding',
+                                    credentialsId: 'dockerhub',
+                                    usernameVariable: 'DOCKER_HUB_USER',
+                                    passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
+                    sh """ docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
+                           docker build -t orelbriga/hello-world-app:${env.BUILD_NUMBER} .
+                           docker push orelbriga/hello-world-app:${env.BUILD_NUMBER}"""
                   }
+//                  def registryCredentialID = 'dockerhub'
+//                  log.info "building docker image:"
+//                  def dockerImage = docker.build REGISTRY+"/"+REPOSITORY
+//                  log.info "Login to private repo on dockerhub:"
+//                  docker.withRegistry('', registryCredentialID) {
+//                    log.info "push the new image to repo with the build number as a tag: "
+//                    dockerImage.push("$TAG")
+//                  }
                 }
               }
             }
