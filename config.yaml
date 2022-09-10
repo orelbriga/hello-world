@@ -2,13 +2,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world-app-${TAG}
+  name: hello-world-app-$TAG
   labels:
-    app: hello-world-app-${TAG}
+    app: hello-world-app-$TAG
 spec:
   selector:
     matchLabels:
-      app: hello-world-app-${TAG}
+      app: hello-world-app-$TAG
   replicas: 1
   template:
     metadata:
