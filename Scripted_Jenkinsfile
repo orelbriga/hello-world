@@ -3,7 +3,7 @@
 def POD_LABEL = "agent-${env.JOB_NAME}-${env.BUILD_NUMBER}"
 def REGISTRY = 'docker.io'
 def REPOSITORY = "orelbriga/hello-world-app"
-def TAG = "${env.BUILD_NUMBER}"
+env.TAG = "${env.BUILD_NUMBER}"
 podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/agent-ci-cd.yaml'))
         {
           node(POD_LABEL) {
@@ -31,7 +31,7 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
                                     passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
                     sh """ echo ${DOCKER_HUB_PASSWORD} | docker login --username ${DOCKER_HUB_USER} --password-stdin
                            docker build -t ${REPOSITORY}:${env.BUILD_NUMBER} --build-arg $TAG .
-                           docker push ${REGISTRY}/${REPOSITORY}:${TAG}"""
+                           docker push ${REGISTRY}/${REPOSITORY}:${env.TAG}"""
                   }
 //                  def registryCredentialID = 'dockerhub'
 //                  log.info "building docker image:"
