@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world-app-$TAG
+  name: hello-world-app-$BUILD_NUMBER
   labels:
-    app: hello-world-app-$TAG
+    app: hello-world-app-$BUILD_NUMBER
 spec:
   selector:
     matchLabels:
-      app: hello-world-app-$TAG
+      app: hello-world-app-$BUILD_NUMBER
   replicas: 1
   template:
     metadata:
       labels:
-        app: hello-world-app-$TAG
+        app: hello-world-app-$BUILD_NUMBER
     spec:
       containers:
-        - name: hello-world-app-$TAG
-          image: orelbriga/hello-world-app:$TAG
+        - name: hello-world-app-$BUILD_NUMBER
+          image: orelbriga/hello-world-app:$BUILD_NUMBER
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -28,12 +28,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-world-svc-$TAG
+  name: hello-world-svc-$BUILD_NUMBER
   labels:
-    app: hello-world-app-$TAG
+    app: hello-world-app-$BUILD_NUMBER
 spec:
   selector:
-    app: hello-world-app-$TAG
+    app: hello-world-app-$BUILD_NUMBER
   ports:
     - protocol: "TCP"
       port: 8080
