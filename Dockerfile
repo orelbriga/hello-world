@@ -1,4 +1,4 @@
-FROM gradle:7.5.1-jdk11-jammy
+FROM gradle:jdk11
 RUN mkdir /hello-world-app
 WORKDIR /hello-world-app
 COPY build/libs/hello-world-0.0.1-SNAPSHOT.jar app.jar

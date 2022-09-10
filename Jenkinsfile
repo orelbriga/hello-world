@@ -69,11 +69,11 @@ pipeline {
                             | awk \'{print $1}\') -o=jsonpath=\'{.status.hostIP}\' ' , returnStdout: true
                             ).trim()
 
-//                             def NODE_PORT = sh(
-//                             script: './kubectl get svc hello-world-svc-$BUILD_NUMBER -o=jsonpath=\'{.spec.ports[].nodePort}\' ',
-//                             returnStdout: true
-//                             ).trim()
-                            def NODE_PORT = nodePort()
+                            def NODE_PORT = sh(
+                            script: './kubectl get svc hello-world-svc-$BUILD_NUMBER -o=jsonpath=\'{.spec.ports[].nodePort}\' ',
+                            returnStdout: true
+                            ).trim()
+
                             echo "Sending GET request to the application: "
                             def RESPONSE = httpRequest "http://$CLUSTER_HOST_IP:$NODE_PORT"
                             println("Content: "+RESPONSE.content)

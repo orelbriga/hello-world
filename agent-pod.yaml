@@ -3,7 +3,7 @@ kind: Pod
 spec:
   containers:
     - name: gradle
-      image: gradle:7.5.1-jdk11-jammy
+      image: gradle:jdk11
       imagePullPolicy: "IfNotPresent"
       command:
         - cat
