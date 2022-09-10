@@ -1,8 +1,10 @@
 #!groovy
 @Library("shared-library") _
 def POD_LABEL = "agent-${env.JOB_NAME}-${env.BUILD_NUMBER}"
-def REGISTRY = 'docker.io'
-def REPOSITORY = "orelbriga/hello-world-app"
+def REGISTRY = "docker.io"
+def IMAGE_NAME = "hello-world-app"
+def REGISTRY_USER = "orelbriga"
+def REPOSITORY = REGISTRY_USER+"/"+IMAGE_BASE
 env.TAG = "${env.BUILD_NUMBER}"
 podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/agent-ci-cd.yaml'))
         {
@@ -30,7 +32,7 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
                                     usernameVariable: 'DOCKER_HUB_USER',
                                     passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
                     sh """ echo ${DOCKER_HUB_PASSWORD} | docker login --username ${DOCKER_HUB_USER} --password-stdin
-                           docker build -t ${REPOSITORY}:${env.BUILD_NUMBER} --build-arg $TAG .
+                           docker build -t ${REPOSITORY}:${env.BUILD_NUMBER} .
                            docker push ${REGISTRY}/${REPOSITORY}:${env.TAG}"""
                   }
 //                  def registryCredentialID = 'dockerhub'
