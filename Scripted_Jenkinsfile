@@ -1,7 +1,7 @@
 #!groovy
 @Library("shared-library") _
 def POD_LABEL = "agent-${env.JOB_NAME}-${env.BUILD_NUMBER}"
-podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/agent-ci-cd.yaml'))
+podTemplate(label: POD_LABEL, yaml: libraryResource('com/ci-task/podTemplates/agent-ci-cd.yaml'))
         {
           node(POD_LABEL) {
             stage('Git checkout') {
@@ -14,9 +14,9 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
               container('gradle') {
                 log.info "compiling code + running  tests + building jar: "
                 sh """chmod +x ./gradlew
-              ./gradlew clean build"""
+                     ./gradlew clean build"""
                 log.info "saving jar as an artifact:"
-                archiveArtifacts artifacts: 'build/libs/hello-world-0.0.1-SNAPSHOT.jar', onlyIfSuccessful: true
+                archiveArtifacts artifacts: 'build/libs/*SNAPSHOT.jar', onlyIfSuccessful: true
               }
             }
             stage('Build docker image & push to registry') {
@@ -28,12 +28,12 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
                 env.TAG = "${env.BUILD_NUMBER}"
                 script {
                   log.info "building docker image:"
-                  image.build()
+                  dockerImage.build()
                   log.info "pushing image to registry - ${env.REGISTRY}"
-                  image.push()
-                  }
+                  dockerImage.push()
                 }
               }
+            }
             stage('Deploy app to k8s') {
               container('docker') {
                 log.info "deploy the app to the k8s cluster using yaml files - with kube-config as an authenticator: "
@@ -47,24 +47,11 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
                     log.info "installing kubectl on the container to check the application's pod state + logs:"
                     deployVars.downloadKubectl(version:"1.24.1")
                     sleep 5
-
-                    def APP_POD_NAME = deployVars.appName()
-                    def POD_STATE = deployVars.podState()
-//                    def CLUSTER_HOST_IP = deployVars.clusterHostIP()
-//                    def NODE_PORT = deployVars.nodePort()
-
                     deployVars.getRequest()
                     sleep 3
-
                     deployVars.getAppLogs()
-                    archiveArtifacts artifacts: 'hello-world-app-*.log'
-
-                    if (POD_STATE != "Running") {
-                      error("Application pod $APP_POD_NAME is not healthy, check app log")
-                    }
-                    else {
-                      log.info "Application pod $APP_POD_NAME is in $POD_STATE state!"
-                    }
+                    archiveArtifacts artifacts: "${env.IMAGE_NAME}-*.log"
+                    deployVars.checkPodState()
                   }
                 }
               }

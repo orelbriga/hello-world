@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.7.1'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'com.google.cloud.tools.jib' version '3.3.0'
 }
 
 group = 'com.hello-world'
@@ -19,6 +20,19 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jib {
+	from {
+		image = 'gradle:jdk11'
+	}
+	to {
+		image = 'docker.io/orelbriga/hello-world-app'
+		auth {
+			username = 'orelbriga'
+			password = 'Orelbriga1'
+		}
+	}
 }
 
 task helloworld {
