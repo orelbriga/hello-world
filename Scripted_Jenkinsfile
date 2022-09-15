@@ -2,6 +2,11 @@
 @Library("shared-library") _
 def POD_LABEL = "agent-${env.JOB_NAME}-${env.BUILD_NUMBER}"
 podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/agent-ci-cd.yaml'))
+env.REGISTRY = "docker.io"
+env.IMAGE_NAME = "hello-world-app"
+env.REGISTRY_USER = "orelbriga"
+env.REPOSITORY = REGISTRY_USER+"/"+IMAGE_NAME
+env.TAG = "${env.BUILD_NUMBER}"
         {
           node(POD_LABEL) {
             stage('Git checkout') {
@@ -14,18 +19,13 @@ podTemplate(label: POD_LABEL,  yaml: libraryResource('com/ci-task/podTemplates/a
               container('gradle') {
                 log.info "compiling code + running  tests + building jar: "
                 sh """chmod +x ./gradlew
-                ./gradlew jib -DTAG=$BUILD_NUMBER """
+                ./gradlew jib --image=${env.REPOSITORY}:${env.TAG} """
                 // log.info "saving jar as an artifact:"
                 // archiveArtifacts artifacts: 'build/libs/hello-world-0.0.1-SNAPSHOT.jar', onlyIfSuccessful: true
               }
             }
             stage('Build docker image & push to registry') {
               container('docker') {
-                env.REGISTRY = "docker.io"
-                env.IMAGE_NAME = "hello-world-app"
-                env.REGISTRY_USER = "orelbriga"
-                env.REPOSITORY = REGISTRY_USER+"/"+IMAGE_NAME
-                env.TAG = "${env.BUILD_NUMBER}"
                 // script {
                 //   log.info "building docker image:"
                 //   imageStage.build()

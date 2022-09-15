@@ -27,7 +27,7 @@ jib {
 		image = 'gradle:jdk11'
 	}
 	to {
-		image = "docker.io/orelbriga/hello-world-app:555"
+		image = "docker.io/orelbriga/hello-world-app"
 		auth {
 			username = 'orelbriga'
 			password = 'Orelbriga1'
