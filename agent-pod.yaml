@@ -8,6 +8,9 @@ spec:
       command:
         - cat
       tty: true
+      volumeMounts:
+        - name: gradle-cache
+          mountPath: /gradle_local
     - name: docker
       image: docker:latest
       imagePullPolicy: "IfNotPresent"
@@ -21,3 +24,6 @@ spec:
     - name: docker-sock
       hostPath:
         path: /var/run/docker.sock
+    - name: gradle-cache
+      persistentVolumeClaim:
+        claimName: jenkins-pv-claim
