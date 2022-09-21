@@ -26,12 +26,5 @@ jib {
 	from {
 		image = 'gradle:jdk11'
 	}
-//	to {
-//		image = "docker.io/orelbriga/hello-world-app"
-//		auth {
-//			username = registryUser
-//			password = registryPass
-//		}
-//	}
 }
 
