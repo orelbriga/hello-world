@@ -10,7 +10,7 @@ spec:
       tty: true
       volumeMounts:
         - name: gradle-cache
-          mountPath: $PWD/build-cache
+          mountPath: /gradle_local
     - name: docker
       image: docker:latest
       imagePullPolicy: "IfNotPresent"
