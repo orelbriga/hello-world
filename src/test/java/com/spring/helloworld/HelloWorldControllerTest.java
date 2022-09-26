@@ -11,5 +11,6 @@ class HelloWorldControllerTest {
         HelloWorldController controller = new HelloWorldController();
         String response = controller.helloWorld();
         assertEquals("Hello World",response);
+        System.out.println("testing cache behavior");
     }
 }
