@@ -24,6 +24,7 @@ tasks.named('test') {
 
 jib {
 	from {
+		// openjdk:11-jre-slim ->
 		image = 'openjdk@sha256:884c08d0f406a81ae1b5786932abaf399c335b997da7eea6a30cc51529220b66'
 	}
 }
