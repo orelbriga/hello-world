@@ -1,6 +1,0 @@
-#!groovy
-@Library("shared-library") _
-env.REGISTRY = "docker.io"
-env.IMAGE_NAME = "hello-world-app"
-env.REGISTRY_USER = "orelbriga"
-scriptedPipeline_CI_CD()
