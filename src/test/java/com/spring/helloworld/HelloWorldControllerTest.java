@@ -10,6 +10,6 @@ class HelloWorldControllerTest {
     void Test_helloWorld() {
         HelloWorldController controller = new HelloWorldController();
         String response = controller.helloWorld();
-        assertEquals("Hello World",response);
+        assertEquals("Hello World!",response);
     }
 }
