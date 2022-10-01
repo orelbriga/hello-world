@@ -3,8 +3,6 @@ rootProject.name = 'hello-world'
 buildCache {
     local {
         directory = new File(rootDir, 'build-cache')
-//        removeUnusedEntriesAfterDays = 30
-//        push = true
-//        enabled = true
+
     }
 }
